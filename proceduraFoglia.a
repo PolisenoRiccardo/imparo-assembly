@@ -1,0 +1,31 @@
+.data
+array: word 1,2,3,4,5
+
+.globl main
+
+.text
+
+main: 
+    la $a0, array
+    li $a1, 5
+      
+    jal somma_arr
+
+    li $v0, 10
+    syscall
+
+somma_arr:
+    move $t0, $a0 # t0 è l'array
+    move $s0, $a1 # t1 è l'indice massimo
+    lw $t2, $s0 # t2 è l'indice
+    lw $t3, 0($t0)
+loop: 
+    addi $t0, 4
+    lw $t4, 0($t0)
+    add $t3, $t3, $t4
+    addi $t2, -1
+    bgtz $t2, loop
+   
+    move $v0, $t3
+    jr $ra
+

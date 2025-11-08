@@ -1,0 +1,29 @@
+.data
+valori: .word 1, 2, 3
+
+.text
+  la $t7, valori
+  lw $s0, 0($t7)
+  lw $s1, 4($t7)
+  lw $s2, 8($t7)
+  bltz $s0, prodotto # blez controlla <= 0
+  bgtz $s0, somma
+  # non serve beq, la logica funziona già per esclusione
+  and $t0, $s1, $s2
+  j store_result
+
+somma:
+  add $t0, $s0, $s1 
+  add $t0, $t0, $s2
+  j store_result
+  
+prodotto:
+  mul $t0, $s0, $s1 # avevo lasciato il sub
+  mul $t0, $t0, $s2
+
+store_result:
+  sw $t0, 12($t7) # è stato utilizzato $t0 per salvare il risultato, perché i registri $s non sono utilizzati per cambiare valore, ma per convenzione si utilizzano per mantenere valori che rimangono nel tempo
+
+exit:
+  li $v0, 10 # avevo usato erroneamente jr $ra 
+  syscall # lancia il servizio exit (10) 

@@ -1,0 +1,42 @@
+.data
+array: word 1,2,3,4,5,68
+arr_size: 6
+min: 0
+
+.text
+
+main:
+  
+    la $a0, array
+    lw $a1, arr_size
+    
+    jal min_array
+
+min_array:
+    
+    move $t0, $a0
+    move $t1, $a1
+
+loop:
+    move %t6, $zero # l'indice
+    
+    lw $a2, min
+    lw $a3, 0($t0)
+      
+    jal min2numeri
+
+    sw $v0, min
+
+    addi $t0, $t0, 4
+    addi $t6, $t6, 1
+    bgt $a1, $t6, loop
+    j end
+
+min2numeri:
+
+  blt $a2, $a3, end
+  move $v0 ,$a2
+end:
+  jr $ra
+
+

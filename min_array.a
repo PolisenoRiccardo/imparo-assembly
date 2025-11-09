@@ -1,0 +1,86 @@
+.data
+array: .word 1,2,3,4,5,68
+arr_size: .word 6
+
+.text
+
+main:
+  
+   addi $sp, $sp, -40
+   sw $fp, 0($sp)
+   sw $ra, 4($sp)
+   sw $a0, 8($sp)
+   sw $a1, 12($sp)
+   sw $a2, 16($sp)  
+   sw $a3, 20($sp)
+   addi $fp, $sp, 36
+
+   la $a0, array
+   la $t0, arr_size
+   lw $a1, 0($t0)
+   jal min_array
+
+   move $a0, $v0
+   li $v0, 1
+   syscall
+
+   lw $ra, 4($sp)
+   lw $a0, 8($sp)
+   lw $a1, 12($sp)
+   lw $a2, 16($sp)
+   lw $a3, 20($sp)
+   lw $fp, 0($sp)
+   addi $sp, $sp, 40
+
+   jr $ra
+
+min_array: # va utilizzato lo stack pointer
+    
+    addi $sp, $sp, -24 # spazio nello stack pointer per 6 word (che non ha a che fare con l'array)
+    
+    # impostazione dello stack frame
+    sw $fp, 0($sp)
+    sw $ra, 4($sp)
+    sw $a0, 8($sp)
+    addi $fp, $sp, 20
+    sw $a1, 0($fp)
+    
+
+    move $t0, $a0
+    move $t1, $a1
+
+    lw $a0, 0($t0)
+    lw $a1, 4($t0)
+    addi $t1, $t1, -2
+    addi $t0, $t0, 8
+
+loop:
+    
+    jal min2numeri
+    addi $t1, $t1, -1
+    bltz $t1, fine_array
+    
+    lw $a0, 0($t0)
+    addi $t0, $t0, 4
+    move $a1, $v0
+    j loop
+
+fine_array:
+
+    # ripristino registri
+    lw $ra, 4($sp)
+    lw $a0, 8($sp)
+    lw $a1, 0($sp)
+    lw $fp, 0($sp)
+    # libera lo stack
+    addi $sp, $sp, 24
+    jr $ra
+
+min2numeri:
+  blt $a0, $a1, then
+  move $v0 ,$a1
+  jr $ra
+
+then:
+  move $v0, $a0
+  jr $ra
